@@ -47,7 +47,7 @@ class Function:
 
     # Function 1 : Extract columns with missing values
     def list_missing(self, args):
-        print("There are missing values in columns: ")
+        print("There are missing attributes in these following columns: ")
         for cols in self.cols:
             if len(cols.missing_value_indexes) != 0:
                 print(cols.name)
@@ -75,7 +75,7 @@ class Function:
     #Function 3
     def impute(self, args):
         # check the value of method: median, mean, or none
-        if args.method not in [None, 'median', 'mean']:
+        if args.method not in [None, 'median', 'mean','mode']:
             print("Invalid method")
             return
         valid_columns = self.check_valid(args.columns)
@@ -172,20 +172,20 @@ class Function:
     #Function 8: Performing addition, subtraction, multiplication, and division between two numerical attributes.
     def calculate(self, args):
         new_col, formula = args.formula.split('=')
-        # list attribute names from expression
+        # List attribute names from expression
         attrs = list()
         attr = ''
-        for char in formula:
-            if char in '()+-*/':
+        for c in formula:
+            if c in '()+-*/':
                 if attr != '':
                     attrs.append(attr)
                 attr = ''
-            else: attr += char
+            else: attr += c
         if attr != '':
             attrs.append(attr)
         # Get the corresponding column object
         cols = self.check_valid(attrs)
-        # check the validity
+        # Check the validity of attributes
         if len(cols) != len(attrs):
             print('There are invalid attributes in the expression')
             return
@@ -193,11 +193,11 @@ class Function:
             if col.dtype == 'categorical':
                 print('There are categorical attributes in the expression')
                 return
-        # Calulate
-        for ind, entry in enumerate(attrs):
-            formula = formula.replace(entry, 'cols['+str(ind)+']')
+        # Performance calculator
+        for i, j in enumerate(attrs):
+            formula = formula.replace(j, 'cols['+str(i)+']')
         result = eval(formula)
-        # Add new returned column to dataframe and save
+        # Add new returned column and save
         self.names.append(new_col)
         self.cols.append(result)
         self.width += 1

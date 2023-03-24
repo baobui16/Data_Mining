@@ -25,7 +25,7 @@ class Column:
             return 0
 
         if self.dtype == 'numeric':
-            if method == 'median':
+            if method is None or method == 'median':
                 filtered.sort()
                 half = len(filtered) // 2
                 if len(filtered) % 2 == 0:
@@ -34,39 +34,21 @@ class Column:
                     return filtered[half]
             elif method == 'mean':
                 return sum(filtered) / len(filtered)
-            elif method == 'mode':
-                counter = {}
-                max_value = 0
-                modes = []
-                for value in filtered:
-                    if value not in counter:
-                        counter[value] = 1
-                    else:
-                        counter[value] += 1
-                    if counter[value] > max_value:
-                        max_value = counter[value]
-                        modes = [value]
-                    elif counter[value] == max_value:
-                        modes.append(value)
-                return modes
+        counter = {}
+        max_value = 0
+        modes = []
+        
+        for value in filtered:
+            if value not in counter:
+                counter[value] = 1
             else:
-                raise ValueError('Invalid value for method parameter')
-        else:
-            counter = {}
-            max_value = 0
-            modes = []
-            for value in filtered:
-                if value not in counter:
-                    counter[value] = 1
-                else:
-                    counter[value] += 1
-                if counter[value] > max_value:
-                    max_value = counter[value]
-                    modes = [value]
-                elif counter[value] == max_value:
-                    modes.append(value)
-            return modes
-
+                counter[value] += 1
+            if counter[value] > max_value:
+                max_value = counter[value]
+                modes = [value]
+            elif counter[value] == max_value:
+                modes.append(value)
+        return modes
 
     def normalize(self, method):
         # remove None type elements and store to a temp list
@@ -101,11 +83,11 @@ class Column:
     def __add__(self, other):
         result = Column('')
         for i in range(self.length):
-            try:
-                result.add_data(self.data[i] + other.data[i])
-            except:
+            if self.data[i] is None or other.data[i] is None:
                 result.add_data('')
+            else: result.add_data(self.data[i]+other.data[i])
         return result
+
     def __sub__(self, other):
         result = Column('')
         for i in range(self.length):
@@ -130,10 +112,3 @@ class Column:
             except: result.add_data('')
         return result
 
-    def __neg__(self):
-        result = Column('')
-        for val in self.data:
-            if val is None:
-                result.add_data('')
-            else: result.add_data(-val)
-        return result
