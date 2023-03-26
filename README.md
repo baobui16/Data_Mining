@@ -1,6 +1,6 @@
-# Data_Mining
+# Data_Mining Course
 
-## 2. COURSE DESCRIPTION
+## COURSE DESCRIPTION
 The course is designed to provide students with the basics of the field of Data Mining and its 
 applications to other sciences. This course covers general contents related to the process of 
 discovering knowledge from data and the insights related to common techniques in data 
